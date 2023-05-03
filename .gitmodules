@@ -1,3 +1,6 @@
 [submodule "rpi-rgb-led-matrix"]
 	path = matrix
 	url = https://github.com/hzeller/rpi-rgb-led-matrix
+[submodule "firebase"]
+	path = firebase
+	url = https://github.com/firebase/firebase-cpp-sdk
