@@ -132,10 +132,6 @@ void updateGrid()
   // update all the changed pixels one by one for the local grid
 }
 
-void updateGridFromFireBaseArray(int *LED_ID_array)
-{
-}
-
 /* Helper method for function -convertToRgb-
  *  Takes in a string with hexadecimal color code
  *  together with rgb int values.
