@@ -30,3 +30,9 @@
 *.exe
 *.out
 *.app
+
+##test file only for development and testing
+/test.cc
+
+##visual studio setting files
+.vscode/

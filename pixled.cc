@@ -132,14 +132,39 @@ void updateGrid()
   // update all the changed pixels one by one for the local grid
 }
 
-int *convertHexaToRGBValues(char *hexadecimalValue)
+void updateGridFromFireBaseArray(int *LED_ID_array)
 {
-  int r, g, b;
-  std::sscanf(hexadecimalValue, "#%02x%02x%02x", &r, &g, &b);
+}
 
-  static int rgbArray[3] = {r, g, b};
+/* Helper method for function -convertToRgb-
+ *  Takes in a string with hexadecimal color code
+ *  together with rgb int values.
+ *  "#010203" -> r=01, g=02, b=03
+ */
+void hexToRGB(std::string hex, int &r, int &g, int &b)
+{
+  // Remove the '#' from the hexadecimal color code
+  hex.erase(0, 1);
 
-  return rgbArray;
+  // Convert the hexadecimal color code to RGB values
+  sscanf(hex.c_str(), "%02x%02x%02x", &r, &g, &b);
+}
+
+// Function to convert an array of char arrays to a 2D array of RGB values
+std::vector<std::vector<int>> convertToRGB(char **colors, int size)
+{
+  std::vector<std::vector<int>> rgbValues;
+  for (int i = 0; i < size; i++)
+  {
+    // Convert each color code to RGB values
+    int r, g, b;
+    hexToRGB(colors[i], r, g, b);
+
+    // Add the RGB values to the 2D array
+    std::vector<int> rgb{r, g, b};
+    rgbValues.push_back(rgb);
+  }
+  return rgbValues;
 }
 
 int *convertLEDidToXandYCoordinates(int LED_ID)
@@ -151,6 +176,23 @@ int *convertLEDidToXandYCoordinates(int LED_ID)
   static int coordinates[2] = {x, y};
 
   return coordinates;
+}
+
+// Updates the grid with a vector of all the LEDS rgb values
+void updateGridWithRGBIntArray(std::vector<std::vector<int>> rgbValues)
+{
+  int counter = 0;
+  for (int i = 0; i < 64; i++)
+  {
+    for (int j = 0; j < 64; j++)
+    {
+      for (int k = 0; k < 3; k++)
+      {
+        theGrid[i][j][k] = rgbValues[counter][k];
+      }
+      counter++;
+    }
+  }
 }
 
 int main(int argc, char *argv[])
