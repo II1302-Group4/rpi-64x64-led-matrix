@@ -10,25 +10,39 @@ db = firebase.database()
 
 print("Pyrebase database config complete.")
 
-grid = db.child("ledMatrix").get()
-print("Retrieve the full grid")
-print(grid.val())
+# Function to get data of every LED in grid
 
+
+def getFullGrid():
+    grid = db.child("ledMatrix").get()
+    print("Retrieving the full grid...")
+    print(grid.val())
+    return grid.val()
 
 # Define callback function to handle changes
+
+
+def convertCharArrayToString(char):
+    string = ""
+    for x in char:
+        string += x
+    return string
+
+
 def handle_change(event):
     pixel_data = event["data"]
-    pixel_path = event["path"]
-    event_information = [pixel_path[-1], pixel_data]
+    pixel_path = (event["path"])
+    event_information = [pixel_path[-1], convertCharArrayToString(pixel_data)]
     if (pixel_path == '/'):
-        print("Stream is ready")
+        print("Got first event with only '/' as path")
     else:
-        print("HANDLING EVENT")
+        print("[ID, colorValue]")
         print(event_information)
 
 
-# Listen for changes to the path
+getFullGrid()
 
+# Listen for changes to the path
 my_stream = db.child("ledMatrix").stream(handle_change)
 print("Stream is ready and listening for changes in database")
 
