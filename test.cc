@@ -1,21 +1,14 @@
+#include <iostream>
+#include <cstring>
+#include <vector>
+#include <string>
+using namespace std;
 
-#include "led-matrix.h"
-#include <math.h>
-#include <signal.h>
-#include <stdio.h>
-#include <unistd.h>
-
-#include <exception>
-
-#define GRID_WIDTH 64
-#define GRID_HEIGHT 64
+#define GRID_WIDTH 4
+#define GRID_HEIGHT 4
 #define COLORS 3
 
-using rgb_matrix::Canvas;
-using rgb_matrix::FrameCanvas;
-using rgb_matrix::RGBMatrix;
-
-int theGrid[GRID_HEIGHT][GRID_WIDTH][COLORS] = {
+int Grid[64][64][3] = {
     {{0, 0, 0}, {255, 255, 255}, {255, 255, 255}, {255, 255, 255}, {0, 0, 0}, {255, 255, 255}, {0, 0, 0}, {0, 0, 0}, {0, 0, 0}, {0, 0, 0}, {0, 0, 0}, {0, 0, 0}, {0, 0, 0}, {0, 0, 0}, {0, 0, 0}, {0, 0, 0}, {0, 0, 0}, {0, 0, 0}, {0, 0, 0}, {0, 0, 0}, {0, 0, 0}, {0, 0, 0}, {0, 0, 0}, {0, 0, 0}, {0, 0, 0}, {0, 0, 0}, {0, 0, 0}, {0, 0, 0}, {0, 0, 0}, {0, 0, 0}, {0, 0, 0}, {0, 0, 0}, {0, 0, 0}, {0, 0, 0}, {0, 0, 0}, {0, 0, 0}, {0, 0, 0}, {0, 0, 0}, {0, 0, 0}, {0, 0, 0}, {0, 0, 0}, {0, 0, 0}, {0, 0, 0}, {0, 0, 0}, {0, 0, 0}, {0, 0, 0}, {0, 0, 0}, {0, 0, 0}, {0, 0, 0}, {0, 0, 0}, {0, 0, 0}, {0, 0, 0}, {0, 0, 0}, {0, 0, 0}, {0, 0, 0}, {0, 0, 0}, {0, 0, 0}, {0, 0, 0}, {0, 0, 0}, {0, 0, 0}, {0, 0, 0}, {0, 0, 0}, {0, 0, 0}, {0, 0, 0}},
     {{0, 0, 0}, {0, 0, 0}, {0, 0, 0}, {0, 0, 0}, {0, 0, 0}, {0, 0, 0}, {0, 0, 0}, {0, 0, 0}, {0, 0, 0}, {0, 0, 0}, {0, 0, 0}, {0, 0, 0}, {0, 0, 0}, {0, 0, 0}, {0, 0, 0}, {0, 0, 0}, {0, 0, 0}, {0, 0, 0}, {0, 0, 0}, {0, 0, 0}, {0, 0, 0}, {0, 0, 0}, {0, 0, 0}, {0, 0, 0}, {0, 0, 0}, {0, 0, 0}, {0, 0, 0}, {0, 0, 0}, {0, 0, 0}, {0, 0, 0}, {0, 0, 0}, {0, 0, 0}, {0, 0, 0}, {0, 0, 0}, {0, 0, 0}, {0, 0, 0}, {0, 0, 0}, {0, 0, 0}, {0, 0, 0}, {0, 0, 0}, {0, 0, 0}, {0, 0, 0}, {0, 0, 0}, {0, 0, 0}, {0, 0, 0}, {0, 0, 0}, {0, 0, 0}, {0, 0, 0}, {0, 0, 0}, {0, 0, 0}, {0, 0, 0}, {0, 0, 0}, {0, 0, 0}, {0, 0, 0}, {0, 0, 0}, {0, 0, 0}, {0, 0, 0}, {0, 0, 0}, {0, 0, 0}, {0, 0, 0}, {0, 0, 0}, {0, 0, 0}, {0, 0, 0}, {0, 0, 0}},
     {{0, 0, 0}, {0, 0, 0}, {0, 0, 0}, {0, 0, 0}, {0, 0, 0}, {0, 0, 0}, {0, 0, 0}, {0, 0, 0}, {0, 0, 0}, {0, 0, 0}, {0, 0, 0}, {0, 0, 0}, {0, 0, 0}, {0, 0, 0}, {0, 0, 0}, {0, 0, 0}, {0, 0, 0}, {0, 0, 0}, {0, 0, 0}, {0, 0, 0}, {0, 0, 0}, {0, 0, 0}, {0, 0, 0}, {0, 0, 0}, {0, 0, 0}, {0, 0, 0}, {0, 0, 0}, {0, 0, 0}, {0, 0, 0}, {0, 0, 0}, {0, 0, 0}, {0, 0, 0}, {0, 0, 0}, {0, 0, 0}, {0, 0, 0}, {0, 0, 0}, {0, 0, 0}, {0, 0, 0}, {0, 0, 0}, {0, 0, 0}, {0, 0, 0}, {0, 0, 0}, {0, 0, 0}, {0, 0, 0}, {0, 0, 0}, {0, 0, 0}, {0, 0, 0}, {0, 0, 0}, {0, 0, 0}, {0, 0, 0}, {0, 0, 0}, {0, 0, 0}, {0, 0, 0}, {0, 0, 0}, {0, 0, 0}, {0, 0, 0}, {0, 0, 0}, {0, 0, 0}, {0, 0, 0}, {0, 0, 0}, {0, 0, 0}, {0, 0, 0}, {0, 0, 0}, {0, 0, 0}},
@@ -82,55 +75,11 @@ int theGrid[GRID_HEIGHT][GRID_WIDTH][COLORS] = {
     {{0, 0, 0}, {0, 0, 0}, {0, 0, 0}, {0, 0, 0}, {0, 0, 0}, {0, 0, 0}, {0, 0, 0}, {0, 0, 0}, {0, 0, 0}, {0, 0, 0}, {0, 0, 0}, {0, 0, 0}, {0, 0, 0}, {0, 0, 0}, {0, 0, 0}, {0, 0, 0}, {0, 0, 0}, {0, 0, 0}, {0, 0, 0}, {0, 0, 0}, {0, 0, 0}, {0, 0, 0}, {0, 0, 0}, {0, 0, 0}, {0, 0, 0}, {0, 0, 0}, {0, 0, 0}, {0, 0, 0}, {0, 0, 0}, {0, 0, 0}, {0, 0, 0}, {0, 0, 0}, {0, 0, 0}, {0, 0, 0}, {0, 0, 0}, {0, 0, 0}, {0, 0, 0}, {0, 0, 0}, {0, 0, 0}, {0, 0, 0}, {0, 0, 0}, {0, 0, 0}, {0, 0, 0}, {0, 0, 0}, {0, 0, 0}, {0, 0, 0}, {0, 0, 0}, {0, 0, 0}, {0, 0, 0}, {0, 0, 0}, {0, 0, 0}, {0, 0, 0}, {0, 0, 0}, {0, 0, 0}, {0, 0, 0}, {0, 0, 0}, {0, 0, 0}, {0, 0, 0}, {0, 0, 0}, {0, 0, 0}, {0, 0, 0}, {0, 0, 0}, {0, 0, 0}, {0, 0, 0}},
 };
 
-// Make sure we can exit gracefully when Ctrl-C is pressed.
-volatile bool interrupt_received = false;
-static void InterruptHandler(int signo)
-{
-  interrupt_received = true;
-}
-
-int usage(const char *progname)
-{
-  fprintf(stderr, "Usage: %s [led-matrix-options]\n",
-          progname);
-  rgb_matrix::PrintMatrixFlags(stderr);
-  return 1;
-}
-
-// Function for displaying a complete matrix on the Canvas
-void setupGrid(Canvas *canvas)
-{
-
-  // fetch all pixel data from firebase and convert it to suitable digits as well as setting the pixels on the canvas
-
-  for (int y = 0; y < canvas->height(); ++y)
-  {
-    for (int x = 0; x < canvas->width(); ++x)
-    {
-      canvas->SetPixel(x, y, theGrid[y][x][0], theGrid[y][x][1], theGrid[y][x][2]);
-    }
-  }
-}
-
-bool checkForUpdatesToGrid()
-{
-  // call firebase and check if the update flag has been set to true
-  // return true if there is new information, otherwise false
-  return false;
-}
-
-void resetUpdateFlag()
-{
-  // call firebase and set the update flag to false
-}
-
-void updateGrid()
-{
-  // call firebase and fetch all pixels that have changed
-  // reset the list of changed pixels
-  // update all the changed pixels one by one for the local grid
-}
-
+int theGrid[4][4][3] = {
+    {{0, 0, 0}, {0, 1, 1}, {0, 2, 2}, {0, 3, 0}},
+    {{1, 0, 0}, {1, 1, 1}, {1, 2, 2}, {1, 3, 0}},
+    {{2, 0, 0}, {2, 1, 1}, {2, 2, 2}, {2, 3, 0}},
+    {{3, 0, 0}, {3, 1, 1}, {3, 2, 2}, {3, 3, 0}}};
 /* Helper method for function -convertToRgb-
  *  Takes in a string with hexadecimal color code
  *  together with rgb int values.
@@ -138,141 +87,117 @@ void updateGrid()
  */
 void hexToRGB(std::string hex, int &r, int &g, int &b)
 {
-  // Remove the '#' from the hexadecimal color code
-  hex.erase(0, 1);
+    // Remove the '#' from the hexadecimal color code
+    hex.erase(0, 1);
 
-  // Convert the hexadecimal color code to RGB values
-  sscanf(hex.c_str(), "%02x%02x%02x", &r, &g, &b);
+    // Convert the hexadecimal color code to RGB values
+    sscanf(hex.c_str(), "%02x%02x%02x", &r, &g, &b);
 }
 
 // Function to convert an array of char arrays to a 2D array of RGB values
 std::vector<std::vector<int>> convertToRGB(char **colors, int size)
 {
-  std::vector<std::vector<int>> rgbValues;
-  for (int i = 0; i < size; i++)
-  {
-    // Convert each color code to RGB values
-    int r, g, b;
-    hexToRGB(colors[i], r, g, b);
+    std::vector<std::vector<int>> rgbValues;
+    for (int i = 0; i < size; i++)
+    {
+        // Convert each color code to RGB values
+        int r, g, b;
+        hexToRGB(colors[i], r, g, b);
 
-    // Add the RGB values to the 2D array
-    std::vector<int> rgb{r, g, b};
-    rgbValues.push_back(rgb);
-  }
-  return rgbValues;
+        // Add the RGB values to the 2D array
+        std::vector<int> rgb{r, g, b};
+        rgbValues.push_back(rgb);
+    }
+    return rgbValues;
 }
 
 int convertLEDidToYCoordinates(int LED_ID)
 {
-  return (LED_ID / GRID_HEIGHT);
+    return (LED_ID / GRID_HEIGHT);
 }
 
 int convertLEDidToXcoordinate(int LED_ID)
 {
-  return (LED_ID % GRID_WIDTH);
+    return (LED_ID % GRID_WIDTH);
 }
 
 // Updates the grid with a vector of all the LEDS rgb values
 void updateGridWithRGBIntArray(std::vector<std::vector<int>> rgbValues)
 {
-  int counter = 0;
-  for (int i = 0; i < GRID_WIDTH; i++)
-  {
-    for (int j = 0; j < GRID_WIDTH; j++)
+    int counter = 0;
+    for (int i = 0; i < GRID_WIDTH; i++)
     {
-      for (int k = 0; k < COLORS; k++)
-      {
-        theGrid[i][j][k] = rgbValues[counter][k];
-      }
-      counter++;
+        for (int j = 0; j < GRID_WIDTH; j++)
+        {
+            for (int k = 0; k < COLORS; k++)
+            {
+                theGrid[i][j][k] = rgbValues[counter][k];
+            }
+            counter++;
+        }
     }
-  }
 }
 
 void updateSinglePixel(int LED_ID, string hexaColorValue)
 {
-  int r, g, b;
-  int x, y;
-  hexToRGB(hexaColorValue, r, g, b);
-  int RGB[3] = {r, g, b};
+    int r, g, b;
+    int x, y;
+    hexToRGB(hexaColorValue, r, g, b);
+    int RGB[3] = {r, g, b};
 
-  x = convertLEDidToXcoordinate(LED_ID);
-  y = convertLEDidToYCoordinates(LED_ID);
+    x = convertLEDidToXcoordinate(LED_ID);
+    y = convertLEDidToYCoordinates(LED_ID);
 
-  for (int i = 0; i < 3; i++)
-  {
-    theGrid[y][x][i] = RGB[i];
-  }
+    for (int i = 0; i < 3; i++)
+    {
+        theGrid[y][x][i] = RGB[i];
+    }
 }
-
 // For testing
 void printGrid()
 {
-  for (int i = 0; i < GRID_WIDTH; i++)
-  {
-    for (int j = 0; j < GRID_HEIGHT; j++)
+    for (int i = 0; i < GRID_WIDTH; i++)
     {
-      cout << "[ ";
-      for (int k = 0; k < COLORS; k++)
-      {
-        cout << theGrid[i][j][k] << " ";
-      }
-      cout << "] ";
+        for (int j = 0; j < GRID_HEIGHT; j++)
+        {
+            cout << "[ ";
+            for (int k = 0; k < COLORS; k++)
+            {
+                cout << theGrid[i][j][k] << " ";
+            }
+            cout << "] ";
+        }
+        cout << endl;
     }
-    cout << endl;
-  }
 }
 
-int main(int argc, char *argv[])
+void testFunction()
 {
+    int testGrid[4][4][3] = {
+        {{0, 0, 0}, {0, 1, 1}, {0, 2, 2}, {0, 3, 0}},
+        {{1, 0, 0}, {1, 1, 1}, {1, 2, 2}, {1, 3, 0}},
+        {{2, 0, 0}, {2, 1, 1}, {2, 2, 2}, {2, 3, 0}},
+        {{3, 0, 0}, {3, 1, 1}, {3, 2, 2}, {3, 3, 0}}};
+    // char array with 16 hexadecimal color values
+    char *firebaseDataPlaceholder[] = {"#FF0000", "#00FF00", "#0000FF", "#90f556",
+                                       "#90f556", "#90f556", "#90f556", "#90f556",
+                                       "#f20597", "#f5e507", "#FFFF00", "#ffffff",
+                                       "#FF0000", "#00FF00", "#0000FF", "#90f556"};
+    std::vector<std::vector<int>> rgbValues = convertToRGB(firebaseDataPlaceholder, 16);
+    printGrid();
+    updateGridWithRGBIntArray(rgbValues);
+    printGrid();
+    updateSinglePixel('0', "#000000");
+}
 
-  printf("testing that this shows up\n");
-
-  RGBMatrix::Options matrix_options;
-  rgb_matrix::RuntimeOptions runtime_opt;
-
-  matrix_options.cols = GRID_WIDTH;
-  matrix_options.rows = GRID_HEIGHT;
-  matrix_options.disable_hardware_pulsing = true;
-  matrix_options.show_refresh_rate = true;
-
-  if (!rgb_matrix::ParseOptionsFromFlags(&argc, &argv,
-                                         &matrix_options, &runtime_opt))
-  {
-    return usage(argv[0]);
-  }
-
-  if (argc != 1)
-  {
-    return usage(argv[0]);
-  }
-
-  signal(SIGTERM, InterruptHandler);
-  signal(SIGINT, InterruptHandler);
-
-  RGBMatrix *matrix = RGBMatrix::CreateFromOptions(matrix_options, runtime_opt);
-  if (matrix == NULL)
-  {
-    return 1;
-  }
-
-  setupGrid(matrix);
-
-  // Until Ctrl-C is pressed
-  while (!interrupt_received)
-  {
-    sleep(1000);
-    if (checkForUpdatesToGrid())
+int main()
+{
+    printGrid();
+    char *testArrayOfEvent[5][2] = {{"0", "#90f556"}, {"10", "#ff7800"}, {"15", "#90f556"}, {"10", "#ffffff"}, {"1", "#222222"}};
+    for (int i = 0; i < 5; i++)
     {
-      resetUpdateFlag();
-      updateGrid();
+        int id = stoi(testArrayOfEvent[i][0]);
+        updateSinglePixel(id, testArrayOfEvent[i][1]);
     }
-  }
-
-  matrix->Clear();
-  delete matrix;
-
-  printf("\n");
-
-  return 0;
+    printGrid();
 }
