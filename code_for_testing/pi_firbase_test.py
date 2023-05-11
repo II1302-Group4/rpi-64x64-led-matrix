@@ -5,6 +5,8 @@ config = {  # define a dictionary named config with several key-value pairs that
     "databaseURL": "https://pixled-17de5-default-rtdb.europe-west1.firebasedatabase.app/",
     "storageBucket": "pixled-17de5.appspot.com"
 }
+
+gridArray = []
 firebase = pyrebase.initialize_app(config)
 db = firebase.database()
 
@@ -17,22 +19,19 @@ def getFullGrid():
     grid = db.child("ledMatrix").get()
     print("Retrieving the full grid...")
     print(grid.val())
-    return grid.val()
+    print(len(grid.val()))
+    for u in grid.each():
+        gridArray.append(u.val())
+
+    return grid.val
 
 # Define callback function to handle changes
-
-
-def convertCharArrayToString(char):
-    string = ""
-    for x in char:
-        string += x
-    return string
 
 
 def handle_change(event):
     pixel_data = event["data"]
     pixel_path = (event["path"])
-    event_information = [pixel_path[-1], convertCharArrayToString(pixel_data)]
+    event_information = [pixel_path[-1], pixel_data]
     if (pixel_path == '/'):
         print("Got first event with only '/' as path")
     else:
