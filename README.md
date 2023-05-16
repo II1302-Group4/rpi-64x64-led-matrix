@@ -1,5 +1,12 @@
 # rpi-64x64-led-matrix
 
+## requirements
+Requires openssl and curl to work
+```
+sudo apt install openssl
+
+sudo apt install libcurl4-openssl-dev
+```
 
 ## clone command
 To automatically import needed libraries, make sure to include the `--recursive` command when cloning
